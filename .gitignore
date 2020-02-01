@@ -1,0 +1,12 @@
+*/__pycache__/*
+*.pyc
+*.log
+*.swp
+*.bak
+.idea/
+tmp/
+.idea/
+build/
+dist/
+*.egg-info/
+make
