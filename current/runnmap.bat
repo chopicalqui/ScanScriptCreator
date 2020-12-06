@@ -44,6 +44,9 @@ set x11=6000,6001,6002,6003,6004,6005
 set sip=5060,5061
 set vnc=5800,5801,5802,5803,5900,5901,5902,5903
 set mongodb=27017,27018,27019
+set elastic=9200,9300
+set couchdb=5984
+set neo4j=7473,7474
 set winrm=5985,5986
 set dhcp=68
 set tftp=69
@@ -58,13 +61,13 @@ set mssql=1433,1434
 set vnc=5900
 set x11=6000-6005
 
-set tcp_ports=%telnet%,%ftp%,%ssh%,%msprc%,%smtp%,%domain%,%tftp%,%http%,%pop%,%rpcbind%,%adds%,%sftp%,%snmp%,%smb%,%vpn%,%imap%,%rlogin%,%rmi%,%mssql%,%oracle%,%nfs%,%mysql%,%rdp%,%postgresql%,%x11%,%sip%,%vnc%,%mongodb%,%winrm%
+set tcp_ports=%telnet%,%ftp%,%ssh%,%msprc%,%smtp%,%domain%,%tftp%,%http%,%pop%,%rpcbind%,%adds%,%sftp%,%snmp%,%smb%,%vpn%,%imap%,%rlogin%,%rmi%,%mssql%,%oracle%,%nfs%,%mysql%,%rdp%,%postgresql%,%x11%,%sip%,%vnc%,%mongodb%,%elastic%,%couchdb%,%neo4j%,%winrm%
 set udp_ports=%dhcp%,%tftp%,%rpcbind%,%ntp%,%snmp%,%vpn%,%ipmi%,%nfs%,%domain%,%mssql%,%vnc%,%x11%
 
 
 rem Initialization of Default NSE Scripts List
-set tcp_scripts= --script fingerprint-strings
-set udp_scripts= --script fingerprint-strings
+set tcp_scripts= --script fingerprint-strings,banner
+set udp_scripts= --script fingerprint-strings,banner
 
 
 rem Initialization of Nmap Options

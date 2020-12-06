@@ -61,6 +61,9 @@ x11=6000,6001,6002,6003,6004,6005
 sip=5060,5061
 vnc=5800,5801,5802,5803,5900,5901,5902,5903
 mongodb=27017,27018,27019
+elastic=9200,9300
+couchdb=5984
+neo4j=7473,7474
 winrm=5985,5986
 dhcp=68
 tftp=69
@@ -75,13 +78,13 @@ mssql=1433,1434
 vnc=5900
 x11=6000-6005
 
-tcp_ports="$telnet,$ftp,$ssh,$msprc,$smtp,$domain,$tftp,$http,$pop,$rpcbind,$adds,$sftp,$snmp,$smb,$vpn,$imap,$rlogin,$rmi,$mssql,$oracle,$nfs,$mysql,$rdp,$postgresql,$x11,$sip,$vnc,$mongodb,$winrm"
+tcp_ports="$telnet,$ftp,$ssh,$msprc,$smtp,$domain,$tftp,$http,$pop,$rpcbind,$adds,$sftp,$snmp,$smb,$vpn,$imap,$rlogin,$rmi,$mssql,$oracle,$nfs,$mysql,$rdp,$postgresql,$x11,$sip,$vnc,$mongodb,$elastic,$couchdb,$neo4j,$winrm"
 udp_ports="$dhcp,$tftp,$rpcbind,$ntp,$snmp,$vpn,$ipmi,$nfs,$domain,$mssql,$vnc,$x11"
 
 
 # Initialization of Default NSE Scripts List
-tcp_scripts="--script fingerprint-strings"
-udp_scripts="--script fingerprint-strings"
+tcp_scripts="--script fingerprint-strings,banner"
+udp_scripts="--script fingerprint-strings,banner"
 
 
 # Initialization of Nmap Options
