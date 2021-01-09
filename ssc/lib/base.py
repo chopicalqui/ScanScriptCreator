@@ -45,7 +45,6 @@ class BaseScriptCreator:
         self._avg_rtt = args.avg_rtt
         self._top_udp = args.top_udp
         self._top_tcp = args.top_tcp
-        self._interface = args.interface
         self._dns_server = args.dns_server
         self._args = args
         self._nmap_options_first_run = config["NmapGeneralSettings"]["default_options_first_run"]

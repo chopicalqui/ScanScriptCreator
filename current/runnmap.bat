@@ -6,7 +6,7 @@ if exist %1 set hosts=-iL %1
 
 set filepart=%1
 set filepart=%filepart:/=_%
-      
+
 set nmap=C:\Program Files (x86)\nmap\nmap.exe
 if not exist "%nmap%" goto:NmapNotExists
 

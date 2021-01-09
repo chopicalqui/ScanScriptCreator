@@ -40,30 +40,33 @@ if [[ $EUID -ne 0 ]]; then
     exit 1
 fi
 
-if [ -z "$1" ]; then
-	echo "usage: $0 <IP|DNS|hosts file> [directory for log files]"
+if [ $# -lt 2 ]; then
+	echo "usage: $0 <IFACE> <IP|DNS|hosts file> [directory for log files]"
 	exit 1
 fi
 
-if [ -z "$2" ]; then
-    path="./"
-elif [ "${2:${#2}-1:1}" != "/" ]; then
-    path="$2/"
+iface=$1
+
+if [ -e "$2" ]; then
+	hosts="-iL $2"
+	test_host=$(head -n 1 $2)
 else
-    path="$2"
+	hosts="$2"
+	test_host="$2"
 fi
 
-if [ -e "$1" ]; then
-	hosts="-iL $1"
-	test_host=$(head -n 1 $1)
+if [ -z "$3" ]; then
+    path="./"
+elif [ "${3:${#2}-1:1}" != "/" ]; then
+    path="$3/"
 else
-	hosts="$1"
-	test_host="$1"
+    path="$3"
 fi
 
 # log the scanner's IP address configuration
-ifconfig > ipconfig.txt
-route -n > route-n.txt
+timestamp=`date '+%Y%m%d-%H%M%S'`
+ifconfig > ${timestamp}_ipconfig.txt
+route -n > ${timestamp}_route-n.txt
 
 """
 
@@ -117,7 +120,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
             rvalue += os.linesep
 
         rvalue += "{0}# Initialization of Nmap Options{0}".format(os.linesep)
-        rvalue += "nmap_options=\"{}\"{}".format(self._nmap_options, os.linesep)
+        rvalue += "nmap_options=\"{} -e $iface\"{}".format(self._nmap_options, os.linesep)
         rvalue += "nmap_tcp_options=\"{}\"{}".format(self._nmap_tcp_options, os.linesep)
         rvalue += "nmap_udp_options=\"{}\"{}".format(self._nmap_udp_options, os.linesep)
         rvalue += os.linesep
@@ -135,7 +138,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Interesting TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {} -p $tcp_ports $timing_options " \
                   "$exclude_hosts $tcp_scripts $hosts -oA " \
-                  "${{path}}nmap-tcp-interesting_${{1/\\//-}}\"{}".format(self._first_run_options,
+                  "${{path}}nmap-tcp-interesting_${{2/\\//-}}\"{}".format(self._first_run_options,
                                                                           os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
@@ -145,7 +148,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan All TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {} -p- " \
                   "--exclude-ports $tcp_ports $timing_options $exclude_hosts $tcp_scripts $hosts " \
-                  "-oA ${{path}}nmap-tcp-remaining_${{1/\\//-}}\"{}".format(self._nmap_options_not_first_run,
+                  "-oA ${{path}}nmap-tcp-remaining_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
                                                                             os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
@@ -155,7 +158,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Top {} TCP Ports{}".format(self._top_tcp, os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {0} --top-ports {1} --exclude-ports $tcp_ports " \
                   "$timing_options $exclude_hosts $tcp_scripts $hosts -oA " \
-                  "${{path}}nmap-tcp-remaining-top{1}_${{1/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
+                  "${{path}}nmap-tcp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
                                                                                 self._top_tcp,
                                                                                 os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
@@ -166,7 +169,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Interesting UDP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_udp_options $nmap_options {} -p $udp_ports $timing_options " \
                   "$exclude_hosts $udp_scripts $hosts -oA " \
-                  "${{path}}nmap-udp-interesting_${{1/\\//-}}\"{}".format(self._nmap_options_not_first_run,
+                  "${{path}}nmap-udp-interesting_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
                                                                           os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
@@ -176,7 +179,7 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Top {} UDP Ports{}".format(self._top_udp, os.linesep)
         rvalue += "command=\"$nmap $nmap_udp_options $nmap_options {0} --top-ports {1} --exclude-ports $udp_ports " \
                   "$timing_options $exclude_hosts $udp_scripts $hosts -oA " \
-                  "${{path}}nmap-udp-remaining-top{1}_${{1/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
+                  "${{path}}nmap-udp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
                                                                                 self._top_udp,
                                                                                 os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
@@ -210,7 +213,7 @@ class MasscanScriptCreator(BaseNmapMasscanCreator):
             rvalue += os.linesep
 
         rvalue += "{0}# Initialization of Nmap Options{0}".format(os.linesep)
-        rvalue += "masscan_options=\"{}\"{}".format(self._masscan_general_options, os.linesep)
+        rvalue += "masscan_options=\"{} -e $iface\"{}".format(self._masscan_general_options, os.linesep)
         rvalue += os.linesep
 
         rvalue += "{0}# Initialization of Nmap Executable Path{0}".format(os.linesep)
@@ -221,16 +224,16 @@ class MasscanScriptCreator(BaseNmapMasscanCreator):
 
     def _get_interesting_tcp(self):
         rvalue = "# Scan Interesting TCP Ports{}".format(os.linesep)
-        rvalue += "command=\"$masscan $masscan_options -i {} -sS -p $exclude_hosts $tcp_ports $hosts -oX " \
-                  "${{path}}masscan-tcp-interesting_${{1/\\//-}}.xml\"{}".format(self._interface, os.linesep)
+        rvalue += "command=\"$masscan $masscan_options -sS -p $exclude_hosts $tcp_ports $hosts -oX " \
+                  "${{path}}masscan-tcp-interesting_${{2/\\//-}}.xml\"{}".format(os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
 
     def _get_remaining_tcp(self):
         rvalue = "# Scan All TCP Ports{}".format(os.linesep)
-        rvalue += "command=\"$masscan $masscan_options -i {} -sS -p 0-65535 $exclude_hosts $hosts -oX " \
-                  "${{path}}masscan-tcp-all_${{1/\\//-}}.xml\"{}".format(self._interface, os.linesep)
+        rvalue += "command=\"$masscan $masscan_options -sS -p 0-65535 $exclude_hosts $hosts -oX " \
+                  "${{path}}masscan-tcp-all_${{2/\\//-}}.xml\"{}".format(os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue

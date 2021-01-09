@@ -33,7 +33,6 @@ from lib import dos
 parser = argparse.ArgumentParser()
 parser.add_argument("--bash", help="create bash script for nmap or masscan", type=str)
 parser.add_argument("--dos-nmap", help="print nmap scan script for dos", action="store_true")
-parser.add_argument("-i", "--interface", help="specify network interface for masscan", type=str)
 parser.add_argument("--exclude", nargs="*", type=str, help="exclude host/network. note that in contrast to nmap, "
                                                            "masscan only supports one network range/IP address."
                     , metavar="host")
@@ -45,7 +44,7 @@ parser.add_argument("--avg-rtt", default=None, help="specify average round trip 
 parser.add_argument("--exec-path", help="specify path to nmap/masscan executable", type=str)
 args = parser.parse_args()
 
-config_file = os.path.join(os.path.dirname(__file__), "createscanfile.config")
+config_file = os.path.join(os.path.dirname(__file__), "createscanscript.config")
 if not os.path.exists(config_file):
     raise FileNotFoundError("Cmdlet config '{}' not found.".format(config_file))
 config = configparser.ConfigParser()
@@ -59,10 +58,6 @@ if __name__ == "__main__":
     if args.bash and args.bash == "nmap":
         script_creator = bash.NmapScriptCreator(config, args)
     elif args.bash and args.bash == "masscan":
-        if not args.interface:
-            print("If you use masscan, please specify an network interface over which you want to scan.",
-                  file=sys.stderr)
-            sys.exit(1)
         script_creator = bash.MasscanScriptCreator(config, args)
     elif args.dos_nmap:
         script_creator = dos.NmapScriptCreator(config, args)

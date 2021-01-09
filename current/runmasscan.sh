@@ -68,56 +68,27 @@ elastic=9200,9300
 couchdb=5984
 neo4j=7473,7474
 winrm=5985,5986
-dhcp=68
-tftp=69
-rpcbind=111
-ntp=123
-snmp=161
-vpn=500
-ipmi=623
-nfs=2049
-domain=53,5353
-mssql=1433,1434
-vnc=5900
-x11=6000-6005
 
 tcp_ports="$telnet,$ftp,$ssh,$msprc,$smtp,$domain,$tftp,$http,$pop,$rpcbind,$adds,$sftp,$snmp,$smb,$vpn,$imap,$rlogin,$rmi,$mssql,$oracle,$nfs,$mysql,$rdp,$postgresql,$x11,$sip,$vnc,$mongodb,$elastic,$couchdb,$neo4j,$winrm"
-udp_ports="$dhcp,$tftp,$rpcbind,$ntp,$snmp,$vpn,$ipmi,$nfs,$domain,$mssql,$vnc,$x11"
-
-
-# Initialization of Default NSE Scripts List
-tcp_scripts="--script fingerprint-strings,banner"
-udp_scripts="--script fingerprint-strings,banner"
 
 
 # Initialization of Nmap Options
-nmap_options="-Pn -v --stats-every 10 --reason -sV --max-retries 1 --min-hostgroup 64 --traceroute -e $iface"
-nmap_tcp_options="-sS --defeat-rst-ratelimit"
-nmap_udp_options="-sU --defeat-icmp-ratelimit"
+masscan_options="-Pn -v --open --banners --rate 1000 -e $iface"
 
 
 # Initialization of Nmap Executable Path
-nmap=nmap
-
-# Updating NSE Database
-"$nmap" --script-updatedb
+masscan=masscan
 
 
 # Scan Interesting TCP Ports
-command="$nmap $nmap_tcp_options $nmap_options -O -p $tcp_ports $timing_options $exclude_hosts $tcp_scripts $hosts -oA ${path}nmap-tcp-interesting_${2/\//-}"
+command="$masscan $masscan_options -sS -p $exclude_hosts $tcp_ports $hosts -oX ${path}masscan-tcp-interesting_${2/\//-}.xml"
 echo $command
 $command
-# Scan Interesting UDP Ports
-command="$nmap $nmap_udp_options $nmap_options -n -p $udp_ports $timing_options $exclude_hosts $udp_scripts $hosts -oA ${path}nmap-udp-interesting_${2/\//-}"
-echo $command
-$command
+
 # Scan All TCP Ports
-command="$nmap $nmap_tcp_options $nmap_options -n -p- --exclude-ports $tcp_ports $timing_options $exclude_hosts $tcp_scripts $hosts -oA ${path}nmap-tcp-remaining_${2/\//-}"
+command="$masscan $masscan_options -sS -p 0-65535 $exclude_hosts $hosts -oX ${path}masscan-tcp-all_${2/\//-}.xml"
 echo $command
 $command
-# Scan Top 100 UDP Ports
-command="$nmap $nmap_udp_options $nmap_options -n --top-ports 100 --exclude-ports $udp_ports $timing_options $exclude_hosts $udp_scripts $hosts -oA ${path}nmap-udp-remaining-top100_${2/\//-}"
-echo $command
-$command
+
 
 exit 0
