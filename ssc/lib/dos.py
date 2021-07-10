@@ -45,8 +45,9 @@ set nmap={}
 if not exist "%nmap%" goto:NmapNotExists
 
 rem log the scanner's IP address configuration
-ipconfig /ALL > ipconfig.txt
-route PRINT > route-print.txt
+set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_
+ipconfig /ALL > %timestamp%ipconfig.txt
+route PRINT > %timestamp%route-print.txt
 """.format(self._exec)
 
     def _get_post_script(self):
@@ -119,8 +120,8 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
         rvalue = "rem Scan Interesting TCP Ports{}".format(os.linesep)
         rvalue += "set command=\"%nmap%\" %nmap_tcp_options% %nmap_options% {} -p %tcp_ports% " \
                   "%timing_options% %exclude_hosts% %tcp_scripts% %hosts% -oA " \
-                  "nmap-tcp-interesting{}".format(self._first_run_options,
-                                                  os.linesep)
+                  "%timestamp%nmap-tcp-interesting{}".format(self._first_run_options,
+                                                             os.linesep)
         rvalue += "echo %command%{}".format(os.linesep)
         rvalue += "%command%"
         return rvalue
@@ -129,8 +130,8 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
         rvalue = "rem Scan All TCP Ports{}".format(os.linesep)
         rvalue += "set command=\"%nmap%\" %nmap_tcp_options% %nmap_options% {} -p- --exclude-ports " \
                   "%tcp_ports% %timing_options% %exclude_hosts% %tcp_scripts% %hosts% -oA " \
-                  "nmap-tcp-remaining{}".format(self._nmap_options_not_first_run,
-                                                os.linesep)
+                  "%timestamp%nmap-tcp-remaining{}".format(self._nmap_options_not_first_run,
+                                                           os.linesep)
         rvalue += "echo %command%{}".format(os.linesep)
         rvalue += "%command%"
         return rvalue
@@ -139,9 +140,9 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
         rvalue = "rem Scan Top {} TCP Ports{}".format(self._top_tcp, os.linesep)
         rvalue += "set command=\"%nmap%\" %nmap_tcp_options% %nmap_options% {0} --top-ports {1} --exclude-ports " \
                   "%tcp_ports% %timing_options% %tcp_scripts% %hosts% -oA " \
-                  "nmap-tcp-remaining-top{1}{2}".format(self._nmap_options_not_first_run,
-                                                        self._top_tcp,
-                                                        os.linesep)
+                  "%timestamp%nmap-tcp-remaining-top{1}{2}".format(self._nmap_options_not_first_run,
+                                                                   self._top_tcp,
+                                                                   os.linesep)
         rvalue += "echo %command%{}".format(os.linesep)
         rvalue += "%command%"
         return rvalue
@@ -150,8 +151,8 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
         rvalue = "rem Scan Interesting UDP Ports{}".format(os.linesep)
         rvalue += "set command=\"%nmap%\" %nmap_udp_options% %nmap_options% {} -p %udp_ports% %timing_options% " \
                   "%exclude_hosts% %udp_scripts% %hosts% -oA " \
-                  "nmap-udp-interesting{}".format(self._nmap_options_not_first_run,
-                                                  os.linesep)
+                  "%timestamp%nmap-udp-interesting{}".format(self._nmap_options_not_first_run,
+                                                             os.linesep)
         rvalue += "echo %command%{}".format(os.linesep)
         rvalue += "%command%"
         return rvalue
@@ -160,9 +161,9 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
         rvalue = "rem Scan Top {} UDP Ports{}".format(self._top_udp, os.linesep)
         rvalue += "set command=\"%nmap%\" %nmap_udp_options% %nmap_options% {0} --top-ports {1} --exclude-ports " \
                   "%udp_ports% %timing_options% %udp_scripts% %hosts% -oA " \
-                  "nmap-udp-remaining-top{1}{2}".format(self._nmap_options_not_first_run,
-                                                        self._top_udp,
-                                                        os.linesep)
+                  "%timestamp%nmap-udp-remaining-top{1}{2}".format(self._nmap_options_not_first_run,
+                                                                   self._top_udp,
+                                                                   os.linesep)
         rvalue += "echo %command%{}".format(os.linesep)
         rvalue += "%command%"
         return rvalue

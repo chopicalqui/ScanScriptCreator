@@ -138,8 +138,8 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Interesting TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {} -p $tcp_ports $timing_options " \
                   "$exclude_hosts $tcp_scripts $hosts -oA " \
-                  "${{path}}nmap-tcp-interesting_${{2/\\//-}}\"{}".format(self._first_run_options,
-                                                                          os.linesep)
+                  "${{path}}${{timestamp}}_nmap-tcp-interesting_${{2/\\//-}}\"{}".format(self._first_run_options,
+                                                                                         os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -148,8 +148,8 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan All TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {} -p- " \
                   "--exclude-ports $tcp_ports $timing_options $exclude_hosts $tcp_scripts $hosts " \
-                  "-oA ${{path}}nmap-tcp-remaining_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
-                                                                            os.linesep)
+                  "-oA ${{path}}${{timestamp}}_nmap-tcp-remaining_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
+                                                                                           os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -158,9 +158,9 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Top {} TCP Ports{}".format(self._top_tcp, os.linesep)
         rvalue += "command=\"$nmap $nmap_tcp_options $nmap_options {0} --top-ports {1} --exclude-ports $tcp_ports " \
                   "$timing_options $exclude_hosts $tcp_scripts $hosts -oA " \
-                  "${{path}}nmap-tcp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
-                                                                                self._top_tcp,
-                                                                                os.linesep)
+                  "${{path}}${{timestamp}}_nmap-tcp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
+                                                                                               self._top_tcp,
+                                                                                               os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -169,8 +169,8 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Interesting UDP Ports{}".format(os.linesep)
         rvalue += "command=\"$nmap $nmap_udp_options $nmap_options {} -p $udp_ports $timing_options " \
                   "$exclude_hosts $udp_scripts $hosts -oA " \
-                  "${{path}}nmap-udp-interesting_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
-                                                                          os.linesep)
+                  "${{path}}${{timestamp}}_nmap-udp-interesting_${{2/\\//-}}\"{}".format(self._nmap_options_not_first_run,
+                                                                                         os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -179,9 +179,9 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue = "# Scan Top {} UDP Ports{}".format(self._top_udp, os.linesep)
         rvalue += "command=\"$nmap $nmap_udp_options $nmap_options {0} --top-ports {1} --exclude-ports $udp_ports " \
                   "$timing_options $exclude_hosts $udp_scripts $hosts -oA " \
-                  "${{path}}nmap-udp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
-                                                                                self._top_udp,
-                                                                                os.linesep)
+                  "${{path}}${{timestamp}}_nmap-udp-remaining-top{1}_${{2/\\//-}}\"{2}".format(self._nmap_options_not_first_run,
+                                                                                               self._top_udp,
+                                                                                               os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -225,7 +225,7 @@ class MasscanScriptCreator(BaseNmapMasscanCreator):
     def _get_interesting_tcp(self):
         rvalue = "# Scan Interesting TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$masscan $masscan_options -sS -p $exclude_hosts $tcp_ports $hosts -oX " \
-                  "${{path}}masscan-tcp-interesting_${{2/\\//-}}.xml\"{}".format(os.linesep)
+                  "${{path}}${{timestamp}}_masscan-tcp-interesting_${{2/\\//-}}.xml\"{}".format(os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue
@@ -233,7 +233,7 @@ class MasscanScriptCreator(BaseNmapMasscanCreator):
     def _get_remaining_tcp(self):
         rvalue = "# Scan All TCP Ports{}".format(os.linesep)
         rvalue += "command=\"$masscan $masscan_options -sS -p 0-65535 $exclude_hosts $hosts -oX " \
-                  "${{path}}masscan-tcp-all_${{2/\\//-}}.xml\"{}".format(os.linesep)
+                  "${{path}}${{timestamp}}_masscan-tcp-all_${{2/\\//-}}.xml\"{}".format(os.linesep)
         rvalue += "echo $command{}".format(os.linesep)
         rvalue += "$command"
         return rvalue

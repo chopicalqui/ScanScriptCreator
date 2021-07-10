@@ -31,8 +31,8 @@ class BaseScriptCreator:
 
     def __init__(self, config, args):
         self._config = config
-        self._interesting_tcp = self._config.items("InterestingTcpPorts")
-        self._interesting_udp = self._config.items("InterestingUdpPorts")
+        self._interesting_tcp = [("tcp_" + item[0], item[1]) for item in self._config.items("InterestingTcpPorts")]
+        self._interesting_udp = [("udp_" + item[0], item[1]) for item in self._config.items("InterestingUdpPorts")]
         self._nmap_tcp_scripts = config["NmapScripts"]["tcp"]
         self._nmap_udp_scripts = config["NmapScripts"]["udp"]
         self._nmap_rtt_factor_init = int(config["NmapRttComputation"]["factor_init"])
