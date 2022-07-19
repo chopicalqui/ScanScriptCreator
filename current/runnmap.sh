@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [[ $EUID -ne 0 ]]; then
-    echo "This script must run as root"
+    echo "This script must run as root" 
     exit 1
 fi
 
@@ -92,9 +92,9 @@ udp_scripts="--script fingerprint-strings,banner"
 
 
 # Initialization of Nmap Options
-nmap_options="-Pn -v --stats-every 10 --reason -sV --max-retries 1 --min-hostgroup 64 --traceroute -e $iface"
-nmap_tcp_options="-sS --defeat-rst-ratelimit"
-nmap_udp_options="-sU --defeat-icmp-ratelimit"
+nmap_options="-Pn -v --stats-every 10 --reason --max-retries 1 --min-hostgroup 64 --traceroute -e $iface"
+nmap_tcp_options="-sSV --defeat-rst-ratelimit"
+nmap_udp_options="-sUV --defeat-icmp-ratelimit"
 
 
 # Initialization of Nmap Executable Path

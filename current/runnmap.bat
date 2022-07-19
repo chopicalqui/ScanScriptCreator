@@ -6,12 +6,13 @@ if exist %1 set hosts=-iL %1
 
 set filepart=%1
 set filepart=%filepart:/=_%
-
+      
 set nmap=C:\Program Files (x86)\nmap\nmap.exe
 if not exist "%nmap%" goto:NmapNotExists
 
 rem log the scanner's IP address configuration
 set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_
+set timestamp=%timestamp: =0%
 ipconfig /ALL > %timestamp%ipconfig.txt
 route PRINT > %timestamp%route-print.txt
 
@@ -73,9 +74,9 @@ set udp_scripts= --script fingerprint-strings,banner
 
 
 rem Initialization of Nmap Options
-set nmap_options=-Pn -v --stats-every 10 --reason -sV --max-retries 1 --min-hostgroup 64 --traceroute
-set nmap_tcp_options=-sS --defeat-rst-ratelimit
-set nmap_udp_options=-sU --defeat-icmp-ratelimit
+set nmap_options=-Pn -v --stats-every 10 --reason --max-retries 1 --min-hostgroup 64 --traceroute
+set nmap_tcp_options=-sSV --defeat-rst-ratelimit
+set nmap_udp_options=-sUV --defeat-icmp-ratelimit
 
 
 rem  Updating NSE Database
