@@ -64,7 +64,7 @@ else
 fi
 
 # log the scanner's IP address configuration
-timestamp=`date '+%Y%m%d-%H%M%S'`
+timestamp=`date '+%Y%m%d-%H%M%S'`_`hostname`
 ifconfig > ${timestamp}_ipconfig.txt
 route -n > ${timestamp}_route-n.txt
 

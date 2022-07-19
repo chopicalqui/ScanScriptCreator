@@ -35,17 +35,19 @@ class NmapScriptCreator(BaseScriptCreator):
         return """@echo off
 
 if "%1"=="" goto :Help
-set hosts=%1
-if exist %1 set hosts=-iL %1
+set param=%1
+set hosts=%param%
+if exist %param% set hosts=-iL %param%
 
-set filepart=%1
+set filepart=%param%
 set filepart=%filepart:/=_%
-      
+
 set nmap={}
 if not exist "%nmap%" goto:NmapNotExists
 
 rem log the scanner's IP address configuration
-set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_
+set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%hostname%_
+rem set timestamp=%date:~6,4%%date:~3,2%%date:~0,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%hostname%_
 set timestamp=%timestamp: =0%
 ipconfig /ALL > %timestamp%ipconfig.txt
 route PRINT > %timestamp%route-print.txt
