@@ -46,6 +46,7 @@ if not exist "%nmap%" goto:NmapNotExists
 
 rem log the scanner's IP address configuration
 set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_
+set timestamp=%timestamp: =0%
 ipconfig /ALL > %timestamp%ipconfig.txt
 route PRINT > %timestamp%route-print.txt
 """.format(self._exec)
