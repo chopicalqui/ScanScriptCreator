@@ -35,9 +35,12 @@ class NmapScriptCreator(BaseScriptCreator):
         return """@echo off
 
 if "%1"=="" goto :Help
+if "%2"=="" goto :Help
 set param=%1
+set iface=%2
 set hosts=%param%
 if exist %param% set hosts=-iL %param%
+if NOT "%iface%"=="" set iface=-e %iface%
 
 set filepart=%param%
 set filepart=%filepart:/=_%
@@ -49,8 +52,8 @@ rem log the scanner's IP address configuration
 set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%COMPUTERNAME%_
 rem set timestamp=%date:~6,4%%date:~3,2%%date:~0,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%COMPUTERNAME%_
 set timestamp=%timestamp: =0%
-ipconfig /ALL > %timestamp%ipconfig.txt
-route PRINT > %timestamp%route-print.txt
+
+"%nmap%" --iflist > "%timestamp%iflist.log"
 """.format(self._exec)
 
     def _get_post_script(self):
@@ -62,7 +65,11 @@ echo Nmap "%nmap%" does not exist!
 goto :End
 
 :Help
-echo "usage: %0 <IP|DNS|hosts file>"
+echo "usage: %0 <IP|DNS|hosts file> [iface]"
+echo "  IP|DNS|hosts file: The target to be scanned."
+echo "  iface: The network interface used by Nmap. You can use the"
+echo "         following command to determine valid interfaces:"
+echo "         nmap --iflist "
 goto :End
 
 :End
@@ -108,7 +115,7 @@ set timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-sc
             rvalue += os.linesep
 
         rvalue += "{0}rem Initialization of Nmap Options{0}".format(os.linesep)
-        rvalue += "set nmap_options={}{}".format(self._nmap_options, os.linesep)
+        rvalue += "set nmap_options={} %iface%{}".format(self._nmap_options, os.linesep)
         rvalue += "set nmap_tcp_options={}{}".format(self._nmap_tcp_options, os.linesep)
         rvalue += "set nmap_udp_options={}{}".format(self._nmap_udp_options, os.linesep)
         rvalue += os.linesep

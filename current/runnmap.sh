@@ -6,7 +6,12 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [ $# -lt 2 ]; then
-	echo "usage: $0 <IFACE> <IP|DNS|hosts file> [directory for log files]"
+	echo "usage: $0 <iface> <IP|DNS|hosts file> [directory for log files]"
+    echo "  iface: The network interface used by Nmap. You can use the"
+    echo "         following command to determine valid interfaces:"
+    echo "         nmap --iflist "
+	echo "  IP|DNS|hosts file: The target to be scanned."
+	echo "directory for log files: Directory where Nmap shall save output."
 	exit 1
 fi
 
@@ -28,10 +33,12 @@ else
     path="$3"
 fi
 
+# Initialization of Nmap Executable Path
+nmap=nmap
+
 # log the scanner's IP address configuration
 timestamp=`date '+%Y%m%d-%H%M%S'`_`hostname`
-ifconfig > ${timestamp}_ipconfig.txt
-route -n > ${timestamp}_route-n.txt
+"$nmap" --iflist > "${timestamp}_iflist.log"
 
 
 
@@ -96,9 +103,6 @@ nmap_options="-Pn -v --stats-every 10 --reason --max-retries 1 --min-hostgroup 6
 nmap_tcp_options="-sSV --defeat-rst-ratelimit"
 nmap_udp_options="-sUV --defeat-icmp-ratelimit"
 
-
-# Initialization of Nmap Executable Path
-nmap=nmap
 
 # Updating NSE Database
 "$nmap" --script-updatedb

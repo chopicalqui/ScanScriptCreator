@@ -1,9 +1,12 @@
 @echo off
 
 if "%1"=="" goto :Help
+if "%2"=="" goto :Help
 set param=%1
+set iface=%2
 set hosts=%param%
 if exist %param% set hosts=-iL %param%
+if NOT "%iface%"=="" set iface=-e %iface%
 
 set filepart=%param%
 set filepart=%filepart:/=_%
@@ -12,11 +15,11 @@ set nmap=C:\Program Files (x86)\nmap\nmap.exe
 if not exist "%nmap%" goto:NmapNotExists
 
 rem log the scanner's IP address configuration
-set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%hostname%_
-rem set timestamp=%date:~6,4%%date:~3,2%%date:~0,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%hostname%_
+set timestamp=%date:~10,4%%date:~4,2%%date:~7,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%COMPUTERNAME%_
+rem set timestamp=%date:~6,4%%date:~3,2%%date:~0,2%-%time:~0,2%%time:~3,2%%time:~6,2%_%COMPUTERNAME%_
 set timestamp=%timestamp: =0%
-ipconfig /ALL > %timestamp%ipconfig.txt
-route PRINT > %timestamp%route-print.txt
+
+"%nmap%" --iflist > "%timestamp%iflist.log"
 
 
 rem Initialization of Interesting Ports List
@@ -76,7 +79,7 @@ set udp_scripts= --script fingerprint-strings,banner
 
 
 rem Initialization of Nmap Options
-set nmap_options=-Pn -v --stats-every 10 --reason --max-retries 1 --min-hostgroup 64 --traceroute
+set nmap_options=-Pn -v --stats-every 10 --reason --max-retries 1 --min-hostgroup 64 --traceroute %iface%
 set nmap_tcp_options=-sSV --defeat-rst-ratelimit
 set nmap_udp_options=-sUV --defeat-icmp-ratelimit
 
@@ -110,7 +113,11 @@ echo Nmap "%nmap%" does not exist!
 goto :End
 
 :Help
-echo "usage: %0 <IP|DNS|hosts file>"
+echo "usage: %0 <IP|DNS|hosts file> [iface]"
+echo "  IP|DNS|hosts file: The target to be scanned."
+echo "  iface: The network interface used by Nmap. You can use the"
+echo "         following command to determine valid interfaces:"
+echo "         nmap --iflist "
 goto :End
 
 :End

@@ -41,7 +41,12 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [ $# -lt 2 ]; then
-	echo "usage: $0 <IFACE> <IP|DNS|hosts file> [directory for log files]"
+	echo "usage: $0 <iface> <IP|DNS|hosts file> [directory for log files]"
+    echo "  iface: The network interface used by Nmap. You can use the"
+    echo "         following command to determine valid interfaces:"
+    echo "         nmap --iflist "
+	echo "  IP|DNS|hosts file: The target to be scanned."
+	echo "directory for log files: Directory where Nmap shall save output."
 	exit 1
 fi
 
@@ -57,18 +62,20 @@ fi
 
 if [ -z "$3" ]; then
     path="./"
-elif [ "${3:${#2}-1:1}" != "/" ]; then
+elif [ "${{3:${{#2}}-1:1}}" != "/" ]; then
     path="$3/"
 else
     path="$3"
 fi
 
+# Initialization of Nmap Executable Path
+nmap={}
+
 # log the scanner's IP address configuration
 timestamp=`date '+%Y%m%d-%H%M%S'`_`hostname`
-ifconfig > ${timestamp}_ipconfig.txt
-route -n > ${timestamp}_route-n.txt
+"$nmap" --iflist > "${{timestamp}}_iflist.log"
 
-"""
+""".format(self._exec)
 
     def _get_post_script(self):
         return """
@@ -123,10 +130,6 @@ timing_options="--initial-rtt-timeout {1}ms --max-rtt-timeout {2}ms --max-scan-d
         rvalue += "nmap_options=\"{} -e $iface\"{}".format(self._nmap_options, os.linesep)
         rvalue += "nmap_tcp_options=\"{}\"{}".format(self._nmap_tcp_options, os.linesep)
         rvalue += "nmap_udp_options=\"{}\"{}".format(self._nmap_udp_options, os.linesep)
-        rvalue += os.linesep
-
-        rvalue += "{0}# Initialization of Nmap Executable Path{0}".format(os.linesep)
-        rvalue += "nmap={}".format(self._exec, os.linesep)
         rvalue += os.linesep
 
         rvalue += "{0}# Updating NSE Database{0}".format(os.linesep)
